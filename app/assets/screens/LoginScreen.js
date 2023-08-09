@@ -7,18 +7,6 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  /* 
-  useEffect(() => {
-    // Check if the user is already logged in
-    checkIfLoggedIn();
-  }, []);
-
-  const checkIfLoggedIn = async () => {
-    const token = await AsyncStorage.getItem("jwtToken");
-    if (token) {
-      navigation.navigate("Landing", { token });
-    }
-  }; */
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -44,12 +32,16 @@ export default function LoginScreen({ navigation }) {
         }
       );
 
-      if (response.data.token) {
+      if (response.data.token && response.data) {
         // Store the JWT token securely using AsyncStorage
         await AsyncStorage.setItem("jwtToken", response.data.token);
+        await AsyncStorage.setItem("userId", response.data.userId);
 
         // Navigate to LandingScreen or do something else on successful login
-        navigation.navigate("Landing", { token: response.data.token });
+        navigation.navigate("Landing", {
+          token: response.data.token,
+          UID: response.data.userId,
+        });
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Login failed");
@@ -80,6 +72,7 @@ export default function LoginScreen({ navigation }) {
         onPress={() => navigation.navigate("Register")}
         style={styles.button}
       />
+      <Text style={styles.errorMessage}>{errorMessage}</Text>
     </View>
   );
 }
@@ -106,7 +99,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    width: "100%", // Set the width to 90%
+    width: "100%",
+    marginTop: 10,
+  },
+  errorMessage: {
+    color: "red",
     marginTop: 10,
   },
 });
