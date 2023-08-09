@@ -1,41 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
-export default function LandingScreen({ navigation, route }) {
-  const { token } = route.params;
+export default function LandingScreen({ navigation }) {
+  const [token, setToken] = useState(null);
 
-  const handleLogout = () => {
-    // logout logic here
-    navigation.navigate("Login");
-  };
-
-  // Use the token for authenticated API requests
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("YOUR_AUTHENTICATED_API_ENDPOINT", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      console.log("Data fetched:", response.data);
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  };
   useEffect(() => {
-    // Check if the token is present
-    if (!token) {
-      // Navigate to the login screen if not logged in
+    checkIfLoggedIn();
+  }, []);
+
+  const checkIfLoggedIn = async () => {
+    const storedToken = await AsyncStorage.getItem("jwtToken");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      // Token doesn't exist, navigate back to the login screen
       navigation.navigate("Login");
     }
-  }, [token, navigation]);
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("jwtToken");
+    navigation.navigate("Login");
+  };
 
   return (
     <View style={styles.container}>
       <Text>Welcome to the App!</Text>
+      <Text>Token: {token}</Text>
       <Button title="Logout" onPress={handleLogout} />
-      <Button title="Fetch Data" onPress={fetchData} />
     </View>
   );
 }

@@ -1,11 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  /* 
+  useEffect(() => {
+    // Check if the user is already logged in
+    checkIfLoggedIn();
+  }, []);
+
+  const checkIfLoggedIn = async () => {
+    const token = await AsyncStorage.getItem("jwtToken");
+    if (token) {
+      navigation.navigate("Landing", { token });
+    }
+  }; */
+
+  useEffect(() => {
+    checkIfLoggedIn();
+  }, []);
+
+  const checkIfLoggedIn = async () => {
+    const storedToken = await AsyncStorage.getItem("jwtToken");
+    if (storedToken) {
+      navigation.navigate("Landing");
+    } else {
+      // Token doesn't exist, navigate back to the login screen
+      navigation.navigate("Login");
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -18,12 +45,11 @@ export default function LoginScreen({ navigation }) {
       );
 
       if (response.data.token) {
-        // Store the JWT token securely (e.g., AsyncStorage, Redux, etc.)
-        // Here, we're just using useState to store it temporarily for the example
-        const token = response.data.token;
+        // Store the JWT token securely using AsyncStorage
+        await AsyncStorage.setItem("jwtToken", response.data.token);
 
         // Navigate to LandingScreen or do something else on successful login
-        navigation.navigate("Landing", { token });
+        navigation.navigate("Landing", { token: response.data.token });
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Login failed");
@@ -61,7 +87,6 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     justifyContent: "center",
     alignItems: "center",
   },
