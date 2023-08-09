@@ -7,8 +7,10 @@ export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [contact, setContact] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     checkIfLoggedIn();
@@ -23,6 +25,10 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     try {
+      if (password !== confirmPassword) {
+        setErrorMessage("Passwords do not match");
+        return;
+      }
       const response = await axios.post(
         "https://nextjsapi-ijvo.onrender.com/register",
         {
@@ -65,7 +71,19 @@ export default function RegisterScreen({ navigation }) {
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={!showPassword}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry={!showPassword}
+      />
+      <Button
+        style={styles.button}
+        title={showPassword ? "Hide" : "Show"}
+        onPress={() => setShowPassword(!showPassword)}
       />
       <TextInput
         style={styles.input}
@@ -73,11 +91,10 @@ export default function RegisterScreen({ navigation }) {
         value={contact}
         onChangeText={setContact}
       />
-      <Button title="Register" onPress={handleRegister} style={styles.button} />
+      <Button title="Register" onPress={handleRegister} />
       <Button
         title="Back to Login"
         onPress={() => navigation.navigate("Login")}
-        style={styles.button}
       />
       <Text style={styles.errorMessage}>{errorMessage}</Text>
     </View>
@@ -88,15 +105,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    padding: 18,
+    gap: 3,
   },
   label: {
     fontSize: 18,
     marginBottom: 10,
   },
   input: {
-    width: "90%",
+    width: "100%",
     height: 40,
+    marginHorizontal: "auto",
     paddingHorizontal: 10,
     marginBottom: 10,
     borderWidth: 1,
@@ -104,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   button: {
-    width: "100%", // Set the width to 90%
+    width: "100%",
     marginTop: 10,
   },
   errorMessage: {

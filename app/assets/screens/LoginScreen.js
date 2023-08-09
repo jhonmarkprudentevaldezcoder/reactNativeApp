@@ -88,14 +88,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    gap: 3,
+    padding: 18,
   },
   label: {
     fontSize: 18,
     marginBottom: 10,
   },
   input: {
-    width: "90%",
+    marginHorizontal: "auto",
+    width: "100%",
     height: 40,
     paddingHorizontal: 10,
     marginBottom: 10,
