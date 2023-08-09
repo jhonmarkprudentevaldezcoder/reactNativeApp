@@ -41,7 +41,17 @@ export default function RegisterScreen({ navigation }) {
 
       if (response.data) {
         // Navigate to LandingScreen or do something else on successful login
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setContact("");
+        setErrorMessage("");
         navigation.navigate("Login");
+      } else if (
+        response.status === 400 &&
+        response.data.message === "Email already taken."
+      ) {
+        setErrorMessage("Email is already taken");
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Register failed");

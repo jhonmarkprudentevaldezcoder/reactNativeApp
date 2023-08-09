@@ -23,7 +23,8 @@ export default function LandingScreen({ route, navigation }) {
   };
 
   const handleLogout = async () => {
-    /*  await AsyncStorage.removeItem("jwtToken"); */
+    await AsyncStorage.removeItem("jwtToken");
+    await AsyncStorage.removeItem("userId");
     navigation.navigate("Login");
   };
 

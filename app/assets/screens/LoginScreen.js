@@ -40,8 +40,10 @@ export default function LoginScreen({ navigation }) {
         // Navigate to LandingScreen or do something else on successful login
         navigation.navigate("Landing", {
           token: response.data.token,
-          UID: response.data.userId,
+          UID: response.data._id,
         });
+        setEmail("");
+        setPassword("");
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Login failed");
