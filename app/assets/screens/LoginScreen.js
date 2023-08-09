@@ -46,6 +46,7 @@ export default function LoginScreen({ navigation }) {
         // Store the JWT token securely using AsyncStorage
         await AsyncStorage.setItem("jwtToken", response.data.token);
         await AsyncStorage.setItem("userId", response.data.userId);
+        await AsyncStorage.setItem("userEmail", response.data.email);
 
         // Navigate to LandingScreen or do something else on successful login
         navigation.navigate("Landing", {

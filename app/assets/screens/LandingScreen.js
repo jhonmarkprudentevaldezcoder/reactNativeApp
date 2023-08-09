@@ -12,6 +12,7 @@ export default function LandingScreen({ route, navigation }) {
       headerShown: false,
     });
   }, [navigation]);
+
   useEffect(() => {
     checkIfLoggedIn();
   }, []);
@@ -19,9 +20,11 @@ export default function LandingScreen({ route, navigation }) {
   const checkIfLoggedIn = async () => {
     const storedToken = await AsyncStorage.getItem("jwtToken");
     const storedUID = await AsyncStorage.getItem("userId");
-    if (storedToken && storedUID) {
+    const storedUserEmail = await AsyncStorage.getItem("userEmail");
+    if (storedToken && storedUID && storedUserEmail) {
       setToken(storedToken);
       setUid(storedUID);
+      setUserEmail(storedUserEmail);
     } else {
       // Token doesn't exist, navigate back to the login screen
       navigation.navigate("Login");
@@ -35,31 +38,20 @@ export default function LandingScreen({ route, navigation }) {
   };
 
   return (
-    /*  <View style={styles.container}>
-      <Text>Welcome to the App!</Text>
-      <Text>Token: {token}</Text>
-
-      <Text>Id: {Uid}</Text>
-
-      <Button title="Logout" onPress={handleLogout} />
-    </View> */
-
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
           <Text style={styles.appName}>APP</Text>
-          <Text style={styles.date}>{/* new Date().toDateString() */ Uid}</Text>
+          <Text style={styles.date}>
+            {/* new Date().toDateString() */ userEmail}
+          </Text>
         </View>
         <View>
           <Button title="Logout" onPress={handleLogout} />
         </View>
       </View>
 
-      <View style={styles.content}>
-        {/* Display user data here */}
-        <Text style={styles.userData}>User's Name and Email</Text>
-        <Button title="Logout" onPress={handleLogout} />
-      </View>
+      <View style={styles.content}>{/* Display user data here */}</View>
     </View>
   );
 }
