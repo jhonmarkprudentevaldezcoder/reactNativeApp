@@ -5,7 +5,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // Import 
 export default function LandingScreen({ route, navigation }) {
   const [token, setToken] = useState(null);
   const [Uid, setUid] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
   useEffect(() => {
     checkIfLoggedIn();
   }, []);
@@ -29,21 +35,61 @@ export default function LandingScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    /*  <View style={styles.container}>
       <Text>Welcome to the App!</Text>
       <Text>Token: {token}</Text>
 
       <Text>Id: {Uid}</Text>
 
       <Button title="Logout" onPress={handleLogout} />
+    </View> */
+
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.appName}>APP</Text>
+          <Text style={styles.date}>{/* new Date().toDateString() */ Uid}</Text>
+        </View>
+        <View>
+          <Button title="Logout" onPress={handleLogout} />
+        </View>
+      </View>
+
+      <View style={styles.content}>
+        {/* Display user data here */}
+        <Text style={styles.userData}>User's Name and Email</Text>
+        <Button title="Logout" onPress={handleLogout} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: Platform.OS === "ios" ? 20 : 20,
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  appName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  date: {
+    fontSize: 12,
+  },
+  content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  userData: {
+    fontSize: 16,
+    marginBottom: 20,
   },
 });

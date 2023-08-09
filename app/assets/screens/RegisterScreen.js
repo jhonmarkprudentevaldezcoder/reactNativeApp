@@ -12,8 +12,15 @@ export default function RegisterScreen({ navigation }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
+
   useEffect(() => {
     checkIfLoggedIn();
+    setErrorMessage("");
   }, []);
 
   const checkIfLoggedIn = async () => {
@@ -25,6 +32,10 @@ export default function RegisterScreen({ navigation }) {
 
   const handleRegister = async () => {
     try {
+      if (!name || !email || !password || !confirmPassword || !contact) {
+        setErrorMessage("Please fill in all fields");
+        return;
+      }
       if (password !== confirmPassword) {
         setErrorMessage("Passwords do not match");
         return;
@@ -46,18 +57,21 @@ export default function RegisterScreen({ navigation }) {
         setConfirmPassword("");
         setContact("");
         setErrorMessage("");
+
         navigation.navigate("Login");
-      } else if (
-        response.status === 400 &&
-        response.data.message === "Email already taken."
-      ) {
-        setErrorMessage("Email is already taken");
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Register failed");
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      if (error.response && error.response.status === 400) {
+        // Handle the "Bad Request" error when email is already taken
+        setErrorMessage("Email is already taken");
+      } else {
+        // Handle other errors, show a generic error message
+        console.error("An error occurred:", error);
+        setErrorMessage("Registration failed");
+      }
     }
   };
 

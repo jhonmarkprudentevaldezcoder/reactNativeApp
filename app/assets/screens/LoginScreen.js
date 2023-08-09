@@ -8,6 +8,12 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
+
   useEffect(() => {
     checkIfLoggedIn();
   }, []);
@@ -24,6 +30,10 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
+      if (!email || !password) {
+        setErrorMessage("Please fill in all fields");
+        return;
+      }
       const response = await axios.post(
         "https://nextjsapi-ijvo.onrender.com/login",
         {
@@ -41,15 +51,24 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate("Landing", {
           token: response.data.token,
           UID: response.data._id,
+          email: response.data.email,
         });
         setEmail("");
         setPassword("");
+        setErrorMessage("");
       } else {
         // Handle unsuccessful login, show error message, etc.
         setErrorMessage("Login failed");
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      if (error.response && error.response.status === 401) {
+        // Handle the "Bad Request" error when email is already taken
+        setErrorMessage("Invalid  user name or password");
+      } else {
+        // Handle other errors, show a generic error message
+        console.error("An error occurred:", error);
+        setErrorMessage("Login failed");
+      }
     }
   };
   return (
